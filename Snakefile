@@ -1,9 +1,10 @@
-configfile: "config/config.yml"
+configfile: "config/config_test.yml"
 
 rule all:
    input:
-         expand("results/{key}",
-                 key=config["key"])
+         expand("results/ERA5land.nc")
                 
 # Rules #
-include: "rules/rule.smk"
+include: "rules/retrieve.py"
+include: "rules/merge_year.py"
+include: "rules/merge_all.py"

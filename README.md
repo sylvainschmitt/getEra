@@ -1,19 +1,27 @@
-smkTemplate - Workflow template
+getCordex - Get climatic data from ERA5-Land on CDS using python cdsapi
 ================
 Sylvain Schmitt
 May 5, 2023
 
-- <a href="#installation" id="toc-installation">Installation</a>
-- <a href="#usage" id="toc-usage">Usage</a>
-  - <a href="#locally" id="toc-locally">Locally</a>
-  - <a href="#hpc" id="toc-hpc">HPC</a>
-- <a href="#workflow" id="toc-workflow">Workflow</a>
+- [Installation](#installation)
+- [Usage](#usage)
+- [Workflow](#workflow)
+- [CDS API](#cds-api)
 
 [`singularity` &
 `snakemake`](https://github.com/sylvainschmitt/snakemake_singularity)
-workflow template.
+workflow to retrieve climatic data from ERA5-Land on CDS using python
+cdsapi. The config file is configure for French Guiana spanning all
+month from 1950 to 2022.
 
-![Workflow.](dag/dag.svg)
+``` r
+knitr::include_graphics("dag/dag.svg")
+```
+
+<figure>
+<img src="dag/dag.svg" alt="Workflow." />
+<figcaption aria-hidden="true">Workflow.</figcaption>
+</figure>
 
 # Installation
 
@@ -47,13 +55,13 @@ cd ${GOPATH}/src/github.com/sylabs/singularity && \
   make && \
   sudo make install
 # detect Mutations
-git clone git@github.com:sylvainschmitt/smkTemplate.git
-cd smkTemplate
+git clone git@github.com:sylvainschmitt/getEra.git
+cd getEra
 ```
 
 # Usage
 
-## Locally
+### Locally
 
 ``` bash
 snakemake -np -j 1 --resources mem_mb=10000 # dry run
@@ -61,17 +69,7 @@ snakemake --dag | dot -Tsvg > dag/dag.svg # dag
 snakemake -j 1 --resources mem_mb=10000 # run
 ```
 
-## HPC
-
-### Muse
-
-``` bash
-module load snakemake # for test on node
-snakemake -np # dry run
-sbatch job_muse.sh # run
-```
-
-### Genologin
+### HPC
 
 ``` bash
 module load bioinfo/snakemake-5.25.0 # for test on node
@@ -81,9 +79,35 @@ sbatch job_genologin.sh # run
 
 # Workflow
 
-### [rule](https://github.com/sylvainschmitt/smkTemplate/blob/main/rules/rule.smk)
+### [retrieve](https://github.com/sylvainschmitt/smkTemplate/blob/main/rules/retrieve.py)
 
 - Script:
-  [`rule.R`](https://github.com/sylvainschmitt/smkTemplate/blob/main/scripts/rule.R)
+  [`retrieve.py`](https://github.com/sylvainschmitt/smkTemplate/blob/main/scripts/retrieve.py)
+- Tool: <https://github.com/ecmwf/cdsapi>
+- Singularity: <https://github.com/sylvainschmitt/singularity-cdsapi>
 
-Dummy example of a rule based on an R script.
+### [merge_year](https://github.com/sylvainschmitt/smkTemplate/blob/main/rules/merge_year.py)
+
+- Tool:
+  <https://code.mpimet.mpg.de/projects/cdo/embedded/index.html#x1-40001.1.1>
+- Singularity: docker://alexgleith/cdo
+
+### [merge_all](https://github.com/sylvainschmitt/smkTemplate/blob/main/rules/merge_all.py)
+
+- Tool:
+  <https://code.mpimet.mpg.de/projects/cdo/embedded/index.html#x1-40001.1.1>
+- Singularity: docker://alexgleith/cdo
+
+# CDS API
+
+Get your user ID (UID) and API key from the CDS portal at the address
+<https://cds.climate.copernicus.eu/user> and write it into the
+configuration file, so it looks like:
+
+    $ cat ~/.cdsapirc
+    url: https://cds.climate.copernicus.eu/api/v2
+    key: <UID>:<API key>
+    verify: 0
+
+Remember to agree to the Terms and Conditions of every dataset that you
+intend to download.

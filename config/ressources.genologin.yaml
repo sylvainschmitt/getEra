@@ -4,8 +4,21 @@ __default__:
   cpus: 1
   time: "48:00:00"
   
-rule:
-  jobname: "rule"
+retrieve:
+  jobname: "retrieve"
   mem: "10G"
   cpus: 1
   time: "48:00:00"
+
+merge_year:
+  jobname: "merge_year"
+  mem: "10G"
+  cpus: 1
+  time: "48:00:00"
+  
+merge_all:
+  jobname: "merge_all"
+  mem: "10G"
+  cpus: 1
+  time: "48:00:00"
+  

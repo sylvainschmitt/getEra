@@ -1,3 +1,3 @@
-# smkTemplate 0.1.0.9001
+# getERA 0.1.0.9001
 
--   init
+- init

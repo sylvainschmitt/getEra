@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --time=24:00:00
-#SBATCH -J smkTemplate
-#SBATCH -o smkTemplate.%N.%j.out
-#SBATCH -e smkTemplate.%N.%j.err
+#SBATCH --time=168:00:00
+#SBATCH -J getEra
+#SBATCH -o getEra.%N.%j.out
+#SBATCH -e getEra.%N.%j.err
 #SBATCH --mem=5G
 #SBATCH --cpus-per-task=1
 #SBATCH --mail-type=ALL
-####SBATCH -p unlimitq
+#SBATCH -p unlimitq
 
 # Environment
 module purge
@@ -20,7 +20,7 @@ CORES=100
 mkdir -p snake_subjob_log
 
 # Workflow
-snakemake -s Snakefile --use-singularity -j $CORES --cluster-config $CONFIG --cluster "$COMMAND" --keep-going # maybe --singularity-args "\-\-containall" will be need to avoid conflict with local R env
+snakemake -s Snakefile --use-singularity -j $CORES --cluster-config $CONFIG --cluster "$COMMAND" --keep-going
 
 ## Session informations
 echo '########################################'
